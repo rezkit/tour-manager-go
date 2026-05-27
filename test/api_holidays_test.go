@@ -14,7 +14,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"testing"
-	openapiclient "github.com/rezkit/tour-manager"
+	openapiclient "github.com/rezkit/tour-manager-go"
 )
 
 func Test_tourmanager_HolidaysAPIService(t *testing.T) {

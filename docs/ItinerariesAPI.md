@@ -35,7 +35,7 @@ import (
 	"context"
 	"fmt"
 	"os"
-	openapiclient "github.com/rezkit/tour-manager"
+	openapiclient "github.com/rezkit/tour-manager-go"
 )
 
 func main() {
@@ -101,7 +101,7 @@ import (
 	"context"
 	"fmt"
 	"os"
-	openapiclient "github.com/rezkit/tour-manager"
+	openapiclient "github.com/rezkit/tour-manager-go"
 )
 
 func main() {
@@ -158,7 +158,7 @@ import (
 	"context"
 	"fmt"
 	"os"
-	openapiclient "github.com/rezkit/tour-manager"
+	openapiclient "github.com/rezkit/tour-manager-go"
 )
 
 func main() {
@@ -227,7 +227,7 @@ import (
 	"context"
 	"fmt"
 	"os"
-	openapiclient "github.com/rezkit/tour-manager"
+	openapiclient "github.com/rezkit/tour-manager-go"
 )
 
 func main() {
@@ -293,7 +293,7 @@ import (
 	"context"
 	"fmt"
 	"os"
-	openapiclient "github.com/rezkit/tour-manager"
+	openapiclient "github.com/rezkit/tour-manager-go"
 )
 
 func main() {
@@ -359,7 +359,7 @@ import (
 	"context"
 	"fmt"
 	"os"
-	openapiclient "github.com/rezkit/tour-manager"
+	openapiclient "github.com/rezkit/tour-manager-go"
 )
 
 func main() {
@@ -428,7 +428,7 @@ import (
 	"context"
 	"fmt"
 	"os"
-	openapiclient "github.com/rezkit/tour-manager"
+	openapiclient "github.com/rezkit/tour-manager-go"
 )
 
 func main() {
@@ -494,7 +494,7 @@ import (
 	"context"
 	"fmt"
 	"os"
-	openapiclient "github.com/rezkit/tour-manager"
+	openapiclient "github.com/rezkit/tour-manager-go"
 )
 
 func main() {
@@ -553,7 +553,7 @@ import (
 	"context"
 	"fmt"
 	"os"
-	openapiclient "github.com/rezkit/tour-manager"
+	openapiclient "github.com/rezkit/tour-manager-go"
 )
 
 func main() {
@@ -619,7 +619,7 @@ import (
 	"context"
 	"fmt"
 	"os"
-	openapiclient "github.com/rezkit/tour-manager"
+	openapiclient "github.com/rezkit/tour-manager-go"
 )
 
 func main() {
@@ -685,7 +685,7 @@ import (
 	"context"
 	"fmt"
 	"os"
-	openapiclient "github.com/rezkit/tour-manager"
+	openapiclient "github.com/rezkit/tour-manager-go"
 )
 
 func main() {
@@ -754,7 +754,7 @@ import (
 	"context"
 	"fmt"
 	"os"
-	openapiclient "github.com/rezkit/tour-manager"
+	openapiclient "github.com/rezkit/tour-manager-go"
 )
 
 func main() {
@@ -823,7 +823,7 @@ import (
 	"context"
 	"fmt"
 	"os"
-	openapiclient "github.com/rezkit/tour-manager"
+	openapiclient "github.com/rezkit/tour-manager-go"
 )
 
 func main() {
