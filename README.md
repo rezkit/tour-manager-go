@@ -8,6 +8,32 @@ API behavior), not generated from it — see
 `.claude/skills/update-tour-manager-go-client/SKILL.md` for the conventions
 and process used to keep it that way as the API evolves.
 
+## On the use of language models
+
+This client's code was designed and written with substantial assistance
+from LLM-based coding agents, and that process is expected to continue as
+the API evolves — that's what `AGENTS.md` and the update skill referenced
+above exist to steer consistently.
+
+The reason isn't speed for its own sake. A purely scripted generator (such
+as the `openapi-generator`-based client this one replaced) can only ever
+transform the spec mechanically: every schema becomes a struct, every
+optional field becomes a pointer, every unnamed inline body becomes a
+throwaway type like `InlineObject3`. It has no way to notice that a dozen
+endpoints share an attachment pattern that deserves one shared abstraction,
+or that a spec's own request shape is worth diverging from in favor of a
+cleaner Go convention. An LLM-based process can read the spec the way a
+human maintainer would — semantically, not mechanically — and make exactly
+those judgment calls, while still being systematic enough that the result
+is applied consistently across the whole client rather than ad hoc. The
+skill file is what keeps it systematic: the conventions, and the reasoning
+behind every deliberate deviation from the spec's literal shape, are
+written down and re-applied on every update rather than reinvented.
+
+None of this changes normal engineering standards: every change is
+reviewed, and is expected to pass `go build`, `go vet`, `gofmt`, `go test`,
+and an API-surface diff before it ships (see "Development" below).
+
 ## Installation
 
 ```sh
@@ -118,3 +144,7 @@ make vet     # go vet ./...
 make fmt     # gofmt -l . (should print nothing)
 make apidiff # check exported API surface against the last git tag
 ```
+
+## License
+
+MIT — see [LICENSE](LICENSE).
