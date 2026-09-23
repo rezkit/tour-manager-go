@@ -1,0 +1,27 @@
+{
+  "total": 2,
+  "current_page": 1,
+  "last_page": 1,
+  "from": 1,
+  "to": 2,
+  "data": [
+    {
+      "id": "01gpkgcy6t0m84czh8gy4kcat1",
+      "name": "Skiing",
+      "description": "Ski holidays",
+      "published": true,
+      "searchable": true,
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-02T00:00:00Z"
+    },
+    {
+      "id": "01gpkgcy6t0m84czh8gy4kcat2",
+      "name": "Hiking",
+      "description": "Hiking holidays",
+      "published": true,
+      "searchable": false,
+      "created_at": "2024-01-03T00:00:00Z",
+      "updated_at": "2024-01-04T00:00:00Z"
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "total": 3,
+  "current_page": 2,
+  "last_page": 2,
+  "from": 3,
+  "to": 3,
+  "data": [
+    {
+      "id": "01gpkgcy6t0m84czh8gy4kjat3",
+      "name": "Desert Trek",
+      "code": "DST01",
+      "introduction": "Into the dunes",
+      "description": "<p>Desert description</p>",
+      "ordering": 3,
+      "published": true,
+      "created_at": "2024-01-05T00:00:00Z",
+      "updated_at": "2024-01-06T00:00:00Z",
+      "deleted_at": null
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+[
+  {
+    "id": "01gpkgcy6t0m84czh8gy4kcat1",
+    "name": "Skiing",
+    "description": "Ski holidays",
+    "published": true,
+    "searchable": true,
+    "created_at": "2024-01-01T00:00:00Z",
+    "updated_at": "2024-01-02T00:00:00Z"
+  }
+]
