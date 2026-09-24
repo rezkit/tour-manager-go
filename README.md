@@ -119,7 +119,12 @@ This client currently implements eight fully-worked resources — **Holidays**,
 framework pattern (pagination, attachment, the create/update params
 convention, discriminated unions, and a bespoke CRUD sub-resource shaped
 like `HolidayRelations`, which `HolidayVersions` itself now also follows).
-`CustomFieldsData` (the recorded values for a `Fields`-defined field,
+`Departures` also exposes `DepartureElements` (`client.Departures().Elements(id)`),
+a single-method (`Update` only) sub-resource for setting a
+`DepartureElement`'s inventory and balance-due override, closing the
+"discovering generated IDs" and "no write endpoint" gaps from the original
+coverage report together. `CustomFieldsData` (the recorded values for a
+`Fields`-defined field,
 distinct from the definitions themselves) is standalone, reusable infra —
 currently wired into `Holiday.Fields`, and ready for `Location`,
 `Accommodation` and `Extra` to pick up once those resources are built,
@@ -144,10 +149,6 @@ Separately, the following are excluded from every resource until
 - **Departures**: no `Restore` method — the spec defines no restore
   operation for this resource.
 - **Elements**: no `Restore` method, for the same reason.
-- **DepartureElement inventory**: no way to write a `DepartureElement`'s
-  inventory (as opposed to reading it via `Departure.Elements`) — no path
-  exists in `openapi.yml` for this at all (only the JS sibling client
-  suggests it exists, which isn't sufficient corroboration on its own).
 - **Fields**: `Update` only supports Text and Number fields
   (`UpdateTextFieldParams`/`UpdateNumberFieldParams`) — openapi.yml's
   `updateField` request body documents just those two of the five field

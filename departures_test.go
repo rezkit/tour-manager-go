@@ -5,7 +5,9 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
+	"strings"
 	"testing"
+	"time"
 )
 
 func TestDeparturesResource_List_inventoryVariants(t *testing.T) {
@@ -158,5 +160,74 @@ func TestCreateDepartureParams_marshalsInventoryDiscriminator(t *testing.T) {
 	}
 	if inv["type"] != "allocation" || inv["capacity"] != float64(5) {
 		t.Fatalf("unexpected inventory payload: %v", inv)
+	}
+}
+
+func TestDepartureElements_Update_setsInventory(t *testing.T) {
+	var gotBody []byte
+	client := newTestClient(t, handlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		wantPath := "/holidays/departures/dep1/elements/del1"
+		if r.Method != http.MethodPatch || r.URL.Path != wantPath {
+			t.Fatalf("unexpected request: %s %s", r.Method, r.URL.Path)
+		}
+		var err error
+		gotBody, err = io.ReadAll(r.Body)
+		if err != nil {
+			t.Fatalf("read request body: %v", err)
+		}
+		serveFile(t, w, http.StatusAccepted, "testdata/departures/update_element.json")
+	}))
+
+	de, err := client.Departures().Elements("dep1").Update(context.Background(), "del1", UpdateDepartureElementParams{
+		Inventory: AllocationInventory{Capacity: 15},
+	})
+	if err != nil {
+		t.Fatalf("Update: %v", err)
+	}
+	alloc, ok := de.Inventory.(AllocationInventory)
+	if !ok || alloc.Capacity != 15 {
+		t.Fatalf("unexpected inventory: %+v (ok=%v)", de.Inventory, ok)
+	}
+	if de.BalanceDue == nil || de.BalanceDue.Calculated {
+		t.Fatalf("unexpected balance due: %+v", de.BalanceDue)
+	}
+
+	var decoded map[string]any
+	if err := json.Unmarshal(gotBody, &decoded); err != nil {
+		t.Fatalf("decode request body: %v", err)
+	}
+	inv, ok := decoded["inventory"].(map[string]any)
+	if !ok || inv["type"] != "allocation" || inv["capacity"] != float64(15) {
+		t.Fatalf("unexpected inventory payload: %v", decoded)
+	}
+	if _, present := decoded["balance_due"]; present {
+		t.Errorf("expected balance_due to be omitted (unset): %v", decoded)
+	}
+}
+
+func TestDepartureElements_Update_clearsBalanceDue(t *testing.T) {
+	var gotBody []byte
+	client := newTestClient(t, handlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		var err error
+		gotBody, err = io.ReadAll(r.Body)
+		if err != nil {
+			t.Fatalf("read request body: %v", err)
+		}
+		serveFile(t, w, http.StatusAccepted, "testdata/departures/update_element.json")
+	}))
+
+	_, err := client.Departures().Elements("dep1").Update(context.Background(), "del1", UpdateDepartureElementParams{
+		BalanceDue: ptr(Null[time.Time]()),
+	})
+	if err != nil {
+		t.Fatalf("Update: %v", err)
+	}
+
+	body := string(gotBody)
+	if !strings.Contains(body, `"balance_due":null`) {
+		t.Errorf("expected explicit null balance_due: %s", body)
+	}
+	if strings.Contains(body, `"inventory"`) {
+		t.Errorf("expected inventory to be omitted (unset): %s", body)
 	}
 }

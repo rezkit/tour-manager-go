@@ -109,13 +109,8 @@ func (d *Departure) UnmarshalJSON(data []byte) error {
 // balance-due date, and the [DepartureElementOption]s (with their generated
 // [Price] IDs) bookable against it.
 //
-// Note: openapi.yml documents no way to write a DepartureElement's
-// Inventory — there is no path anywhere in the spec shaped like
-// /holidays/departures/{departure}/elements/{element}. The JS sibling
-// client having such a call is not, on its own, sufficient evidence to
-// guess and ship a request shape here (see AGENTS.md and the
-// update-tour-manager-go-client skill, section 4); this is tracked as a
-// backlog item in README.md until openapi.yml documents the operation.
+// Obtain a DepartureElement by fetching its parent [Departure]; write to it
+// via [DeparturesResource.Elements].
 type DepartureElement struct {
 	ID        string     `json:"id"`
 	CreatedAt time.Time  `json:"created_at"`
@@ -172,6 +167,48 @@ type DepartureElementBalanceDue struct {
 type DepartureElementOption struct {
 	ElementOption
 	Prices []Price `json:"prices"`
+}
+
+// UpdateDepartureElementParams are the properties that may change on an
+// existing DepartureElement. All fields are optional; a nil/zero field is
+// left unchanged.
+//
+// spec: updateDepartureElement
+type UpdateDepartureElementParams struct {
+	// Inventory sets or updates the DepartureElement's own inventory,
+	// independent of its Element's DefaultInventory.
+	Inventory Inventory `json:"inventory,omitempty"`
+
+	// BalanceDue overrides the calculated balance-due date; it must be on
+	// or before the Departure's start date. `nullable: true` in
+	// openapi.yml: use [NullValue] to set an explicit date, [Null] to
+	// revert to automatic calculation, or leave nil to leave it unchanged.
+	BalanceDue *Nullable[time.Time] `json:"balance_due,omitempty"`
+}
+
+// DepartureElements manages the DepartureElements belonging to one
+// specific Departure.
+//
+// Obtain one via [DeparturesResource.Elements]. There is no
+// Create/Get/Delete/List here: DepartureElements are generated
+// automatically when an Element is attached to a Departure, and are only
+// discoverable via [Departure.Elements].
+type DepartureElements struct {
+	client      *Client
+	departureID string
+}
+
+// Update sets or updates a DepartureElement's inventory and/or balance-due
+// override.
+//
+// spec: updateDepartureElement
+func (r *DepartureElements) Update(ctx context.Context, departureElementID string, params UpdateDepartureElementParams) (*DepartureElement, error) {
+	var de DepartureElement
+	path := "/holidays/departures/" + url.PathEscape(r.departureID) + "/elements/" + url.PathEscape(departureElementID)
+	if err := r.client.do(ctx, http.MethodPatch, path, nil, params, &de); err != nil {
+		return nil, err
+	}
+	return &de, nil
 }
 
 // CreateDepartureParams are the properties for creating a new Departure.
@@ -267,4 +304,9 @@ func (r *DeparturesResource) Update(ctx context.Context, id string, params Updat
 // spec: deleteDeparture
 func (r *DeparturesResource) Delete(ctx context.Context, id string) error {
 	return r.client.do(ctx, http.MethodDelete, "/holidays/departures/"+url.PathEscape(id), nil, nil, nil)
+}
+
+// Elements returns the DepartureElements handle for the given Departure.
+func (r *DeparturesResource) Elements(departureID string) *DepartureElements {
+	return &DepartureElements{client: r.client, departureID: departureID}
 }

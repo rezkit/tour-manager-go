@@ -69,10 +69,15 @@ those fields live on the entity itself, typed as `CustomFieldsData` (see
 `HolidayVersions` also has no top-level accessor — every operation on it
 requires a holiday ID, so it's only reached via
 `client.Holidays().Versions(holidayID)` (same shape as
-`client.Holidays().Relations(id)`). **Only Holidays, Categories,
-Departures, Elements, ElementOptions, Prices, Fields and HolidayVersions
-are implemented as of this writing** — see "Known gaps" below before
-assuming any other resource exists; check
+`client.Holidays().Relations(id)`). Likewise `DepartureElements` — reached
+via `client.Departures().Elements(departureID)` — has no top-level
+accessor and no Create/Get/Delete/List: a Departure's elements are
+generated automatically when an `Element` is attached and are only
+discoverable via `Departure.Elements`; the only write operation is
+`Update` (inventory and/or a balance-due override). **Only Holidays,
+Categories, Departures, Elements, ElementOptions, Prices, Fields and
+HolidayVersions are implemented as of this writing** — see "Known gaps"
+below before assuming any other resource exists; check
 `go doc github.com/rezkit/tour-manager-go` for the current accessor list on
 `Client` if unsure.
 
