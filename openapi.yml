@@ -10222,6 +10222,52 @@ paths:
       responses:
         204:
           description: Version deleted
+  /holidays/{holiday_id}/versions/{version_id}/copy:
+    parameters:
+    - $ref: '#/components/parameters/HolidayIdPath'
+    - $ref: '#/components/parameters/VersionIdPath'
+    put:
+      tags:
+      - Holiday Versions
+      summary: Copy Holiday Version
+      description: >
+        Copy a holiday version within the same holiday, including its
+        locations, elements and options, itinerary entries, custom fields,
+        and accommodation, extra and required-information attachments.
+        The new version is unpublished by default.
+      operationId: copyHolidayVersion
+      security:
+      - api_key:
+        - holidays:copy
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - name
+              - code
+              properties:
+                name:
+                  type: string
+                  description: Name for the new version
+                code:
+                  type: string
+                  minLength: 2
+                  maxLength: 16
+                  pattern: '^[A-Z0-9][A-Z0-9-_]*$'
+                  description: Code for the new version
+      responses:
+        201:
+          description: The newly created Holiday Version
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HolidayVersion'
+        422:
+          $ref: '#/components/responses/ValidationError'
+        404:
+          $ref: '#/components/responses/NotFound'
   /holidays/{holiday_id}/versions/{version_id}/restore:
     parameters:
     - $ref: '#/components/parameters/HolidayIdPath'
@@ -10738,6 +10784,59 @@ paths:
       responses:
         204:
           description: Departure deleted
+  /holidays/departures/{departure}/elements/{element}:
+    parameters:
+    - name: departure
+      required: true
+      in: path
+      description: Departure ID
+      schema:
+        $ref: '#/components/schemas/ID'
+    - name: element
+      required: true
+      in: path
+      description: Departure Element ID
+      schema:
+        $ref: '#/components/schemas/ID'
+    patch:
+      summary: Update Departure Element
+      operationId: updateDepartureElement
+      description: Update a departure element, including setting or updating its
+        inventory.
+      tags:
+      - Departures
+      security:
+      - api_key:
+        - holidays:update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                inventory:
+                  description: Set or update the element's inventory for this departure.
+                  allOf:
+                  - $ref: '#/components/schemas/Inventory'
+                balance_due:
+                  type: string
+                  format: date-time
+                  nullable: true
+                  description: Override the calculated balance due date. Must be
+                    on or before the departure's start date. Set to null to revert
+                    to automatic calculation.
+      responses:
+        202:
+          description: Departure Element Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DepartureElement'
+        404:
+          $ref: '#/components/responses/NotFound'
+        422:
+          $ref: '#/components/responses/ValidationError'
   /holidays/prices/{price}:
     parameters:
     - name: price
@@ -13976,7 +14075,7 @@ components:
         capacity:
           type: integer
           minimum: 0
-          maximum: 1000000
+          maximum: 10000
           description: Total number of units in inventory.
     OnRequestInventory:
       type: object
