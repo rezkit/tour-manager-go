@@ -106,6 +106,17 @@ _, err  = attachment.Replace(ctx, []string{categoryID})  // overwrites
 err     = attachment.Detach(ctx, []string{categoryID})   // removes
 ```
 
+### Monetary values
+
+`Price.Value`/`Price.Deposit.Value` (and `UpdatePriceParams`' equivalents)
+are `tourmanager.Decimal`, not `float64`. `openapi.yml` documents them as
+`type: number`, but the API actually encodes them as JSON strings (e.g.
+`"1240.00"`) to avoid floating-point rounding on currency values — a
+spec/wire mismatch confirmed against real API behavior, not a client guess.
+`Decimal` is a defined string type with no arithmetic of its own; convert
+with a decimal-math library of your choice, or `strconv.ParseFloat` if
+approximate float precision is acceptable for your use case.
+
 ## Examples
 
 Runnable sample programs live under [`examples/`](examples/README.md), one

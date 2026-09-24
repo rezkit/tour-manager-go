@@ -128,6 +128,17 @@ params.Introduction = tourmanager.Null[string]()          // explicitly clear it
 // params.Introduction left nil                            // leave unchanged
 ```
 
+### Monetary values are `Decimal`, not `float64`
+
+`Price.Value`/`Price.Deposit.Value` and `UpdatePriceParams`' equivalents
+are `tourmanager.Decimal` (a defined string type), not `float64` — the API
+encodes monetary amounts as JSON strings (e.g. `"1240.00"`) to avoid
+floating-point rounding, despite `openapi.yml` documenting them as
+`type: number`. `Decimal` has no arithmetic of its own; convert with a
+decimal-math library or `strconv.ParseFloat` as your use case requires.
+Don't assume every `type: number` field in the spec is actually a
+`float64` in this client — check `go doc` for the field, not the spec.
+
 ### Attachment sub-resources (many-to-many, e.g. Categories on a Holiday)
 
 ```go

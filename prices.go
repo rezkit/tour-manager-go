@@ -13,7 +13,7 @@ type PriceDeposit struct {
 	// Calculated reports whether Value was derived from a global deposit
 	// rule, as opposed to being set explicitly on this Price.
 	Calculated bool    `json:"calculated"`
-	Value      float64 `json:"value"`
+	Value      Decimal `json:"value"`
 }
 
 // Price is the cost of booking a single [ElementOption] on a specific
@@ -38,8 +38,10 @@ type Price struct {
 	// field — it's still listed under `properties`). bool is inferred from
 	// its description text ("Determines if the price has been initialized
 	// with a value").
-	Initialized bool    `json:"initialized"`
-	Value       float64 `json:"value"`
+	Initialized bool `json:"initialized"`
+	// Value is this Price's monetary amount, carried as a [Decimal] rather
+	// than a float64 — see Decimal's doc comment for why.
+	Value Decimal `json:"value"`
 
 	// Deposit is nil if no deposit rule applies to this Price.
 	Deposit *PriceDeposit `json:"deposit,omitempty"`
@@ -48,14 +50,17 @@ type Price struct {
 // UpdatePriceParams are the properties that may change on an existing
 // Price. All fields are optional; a nil field is left unchanged.
 //
-// Deposit is `nullable: true` in openapi.yml: use [NullValue] to set an
-// explicit deposit, [Null] to clear it (reverting to the operator's default
-// calculation), or leave it nil to leave the deposit unchanged.
+// Value and Deposit are [Decimal] rather than float64, matching the API's
+// actual (if undocumented) string encoding of monetary values — see
+// Decimal's doc comment. Deposit is `nullable: true` in openapi.yml: use
+// [NullValue] to set an explicit deposit, [Null] to clear it (reverting to
+// the operator's default calculation), or leave it nil to leave the
+// deposit unchanged.
 //
 // spec: updatePrice
 type UpdatePriceParams struct {
-	Value   *float64           `json:"value,omitempty"`
-	Deposit *Nullable[float64] `json:"deposit,omitempty"`
+	Value   *Decimal           `json:"value,omitempty"`
+	Deposit *Nullable[Decimal] `json:"deposit,omitempty"`
 	OnSale  *bool              `json:"on_sale,omitempty"`
 }
 

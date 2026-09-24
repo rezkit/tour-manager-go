@@ -21,14 +21,31 @@ func TestPricesResource_Get(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Get: %v", err)
 	}
-	if p.Currency != "USD" || p.Value != 1240.0 {
+	if p.Currency != "USD" || p.Value != "1240.00" {
 		t.Fatalf("unexpected price: %+v", p)
 	}
-	if p.Deposit == nil || p.Deposit.Value != 200.0 {
+	if p.Deposit == nil || p.Deposit.Value != "200.00" {
 		t.Fatalf("unexpected deposit: %+v", p.Deposit)
 	}
 	if !p.Initialized {
 		t.Errorf("Initialized = false, want true")
+	}
+}
+
+// TestPricesResource_Get_numericValue confirms Decimal also decodes a bare
+// JSON number defensively (see Decimal's doc comment), in case a value
+// ever arrives unquoted.
+func TestPricesResource_Get_numericValue(t *testing.T) {
+	client := newTestClient(t, handlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		serveFile(t, w, http.StatusOK, "testdata/prices/get_numeric_value.json")
+	}))
+
+	p, err := client.Prices().Get(context.Background(), "01gpkgcy6t0m84czh8gy4kprc1")
+	if err != nil {
+		t.Fatalf("Get: %v", err)
+	}
+	if p.Value != "1240.00" {
+		t.Fatalf("unexpected value: %q", p.Value)
 	}
 }
 
@@ -59,7 +76,7 @@ func TestPricesResource_Update_clearsDeposit(t *testing.T) {
 	}))
 
 	_, err := client.Prices().Update(context.Background(), "prc1", UpdatePriceParams{
-		Deposit: ptr(Null[float64]()),
+		Deposit: ptr(Null[Decimal]()),
 	})
 	if err != nil {
 		t.Fatalf("Update: %v", err)
@@ -84,14 +101,14 @@ func TestPricesResource_Update_setsValue(t *testing.T) {
 		serveFile(t, w, http.StatusAccepted, "testdata/prices/get.json")
 	}))
 
-	value := 999.5
+	value := Decimal("999.50")
 	_, err := client.Prices().Update(context.Background(), "prc1", UpdatePriceParams{
 		Value: &value,
 	})
 	if err != nil {
 		t.Fatalf("Update: %v", err)
 	}
-	if body := string(gotBody); !strings.Contains(body, `"value":999.5`) {
+	if body := string(gotBody); !strings.Contains(body, `"value":"999.50"`) {
 		t.Errorf("unexpected request body: %s", body)
 	}
 }

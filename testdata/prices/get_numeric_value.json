@@ -5,9 +5,5 @@
   "currency": "USD",
   "on_sale": true,
   "initialized": true,
-  "value": "1240.00",
-  "deposit": {
-    "calculated": true,
-    "value": "200.00"
-  }
+  "value": 1240.00
 }
