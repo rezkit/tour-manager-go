@@ -113,12 +113,17 @@ per directory — e.g. `REZKIT_API_KEY=... go run ./examples/list-holidays`.
 
 ## Known gaps / out of scope
 
-This client currently implements six fully-worked resources — **Holidays**,
-**Categories**, **Departures**, **Elements**, **ElementOptions** and
-**Prices** — chosen to exercise every framework pattern (pagination,
-attachment, the create/update params convention, discriminated unions, and
-a bespoke CRUD sub-resource shaped like `HolidayRelations`). The remaining
-~22 resources in `openapi.yml` are an explicit backlog: follow
+This client currently implements seven fully-worked resources — **Holidays**,
+**Categories**, **Departures**, **Elements**, **ElementOptions**,
+**Prices** and **Fields** — chosen to exercise every framework pattern
+(pagination, attachment, the create/update params convention, discriminated
+unions, and a bespoke CRUD sub-resource shaped like `HolidayRelations`).
+`CustomFieldsData` (the recorded values for a `Fields`-defined field,
+distinct from the definitions themselves) is standalone, reusable infra —
+currently wired into `Holiday.Fields`, and ready for `Location`,
+`Accommodation` and `Extra` to pick up once those resources are built,
+since all three reference the same schema. The remaining ~21 resources in
+`openapi.yml` are an explicit backlog: follow
 `.claude/skills/update-tour-manager-go-client/SKILL.md` to add them.
 
 Separately, the following are excluded from every resource until
@@ -142,6 +147,12 @@ Separately, the following are excluded from every resource until
   inventory (as opposed to reading it via `Departure.Elements`) — no path
   exists in `openapi.yml` for this at all (only the JS sibling client
   suggests it exists, which isn't sufficient corroboration on its own).
+- **Fields**: `Update` only supports Text and Number fields
+  (`UpdateTextFieldParams`/`UpdateNumberFieldParams`) — openapi.yml's
+  `updateField` request body documents just those two of the five field
+  types; Date, Boolean and Selection fields have no update body schema at
+  all. No `Get`/`Delete`/`Restore` for fields or groups either — none of
+  those operations exist in the spec.
 
 See the skill file for the full decision process behind these exclusions,
 and how to promote a resource out of this list once its spec gap is fixed.

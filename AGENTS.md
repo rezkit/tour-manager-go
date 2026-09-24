@@ -56,15 +56,21 @@ client.Categories()
 client.Departures()
 client.Elements()
 client.Prices()
+client.Fields()
 ```
 
 Each returns a small resource-scoped handle. ElementOptions has no
 top-level accessor — it's reached via `client.Elements().Options(elementID)`
-since the spec has no list operation for it. **Only Holidays, Categories,
-Departures, Elements, ElementOptions and Prices are implemented as of this
-writing** — see "Known gaps" below before assuming any other resource
-exists; check `go doc github.com/rezkit/tour-manager-go` for the current
-accessor list on `Client` if unsure.
+since the spec has no list operation for it. `Fields` manages custom-field
+*definitions*, scoped by `EntityType` only (not a specific item — every
+entity of a type shares the same definitions); the recorded *values* for
+those fields live on the entity itself, typed as `CustomFieldsData` (see
+`Holiday.Fields` for the one entity that currently exposes it). **Only
+Holidays, Categories, Departures, Elements, ElementOptions, Prices and
+Fields are implemented as of this writing** — see "Known gaps" below before
+assuming any other resource exists; check
+`go doc github.com/rezkit/tour-manager-go` for the current accessor list on
+`Client` if unsure.
 
 ### Pagination: `List` (one page) vs `All` (every page)
 
@@ -148,8 +154,8 @@ isn't.
 ### Known gaps
 
 Only **Holidays**, **Categories**, **Departures**, **Elements**,
-**ElementOptions**, **Prices** are implemented. Beyond that, some operations
-are deliberately excluded even on implemented
+**ElementOptions**, **Prices**, **Fields** are implemented. Beyond that,
+some operations are deliberately excluded even on implemented
 resources because `openapi.yml` doesn't document them confidently enough
 to ship (e.g. Holiday has no `Copy`, Categories has no single-item `Get`).
 Full list and reasoning: see `README.md`'s "Known gaps / out of scope"

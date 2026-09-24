@@ -1,0 +1,10 @@
+{
+  "id": "01gpkgcy6t0m84czh8gy4kfd3",
+  "name": "party_size",
+  "group_id": "01gpkgcy6t0m84czh8gy4kgr1",
+  "rank": 2,
+  "label": "Party Size",
+  "required": true,
+  "type": "number",
+  "precision": 0
+}

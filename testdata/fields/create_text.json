@@ -1,0 +1,9 @@
+{
+  "id": "01gpkgcy6t0m84czh8gy4kfd1",
+  "name": "trip_notes",
+  "group_id": "01gpkgcy6t0m84czh8gy4kgr1",
+  "rank": 0,
+  "label": "Trip Notes",
+  "required": false,
+  "type": "text"
+}

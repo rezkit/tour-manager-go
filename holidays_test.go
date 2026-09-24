@@ -155,6 +155,29 @@ func TestHolidaysResource_Get(t *testing.T) {
 	}
 }
 
+func TestHolidaysResource_Get_customFields(t *testing.T) {
+	client := newTestClient(t, handlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		serveFile(t, w, http.StatusOK, "testdata/holidays/get_with_fields.json")
+	}))
+
+	h, err := client.Holidays().Get(context.Background(), "01gpkgcy6t0m84czh8gy4kjat1")
+	if err != nil {
+		t.Fatalf("Get: %v", err)
+	}
+	if len(h.Fields) != 2 {
+		t.Fatalf("expected 2 custom fields, got %d: %+v", len(h.Fields), h.Fields)
+	}
+
+	notes, ok := h.Fields["trip_notes"].(TextFieldValue)
+	if !ok || notes.Value != "Bring hiking boots" {
+		t.Errorf("unexpected trip_notes field: %+v (ok=%v)", h.Fields["trip_notes"], ok)
+	}
+	access, ok := h.Fields["wheelchair_access"].(BooleanFieldValue)
+	if !ok || access.Value != false {
+		t.Errorf("unexpected wheelchair_access field: %+v (ok=%v)", h.Fields["wheelchair_access"], ok)
+	}
+}
+
 func TestHolidaysResource_Get_notFound(t *testing.T) {
 	client := newTestClient(t, handlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		serveFile(t, w, http.StatusNotFound, "testdata/holidays/not_found.json")

@@ -2,7 +2,6 @@ package tourmanager
 
 import (
 	"context"
-	"encoding/json"
 	"iter"
 	"net/http"
 	"net/url"
@@ -73,13 +72,8 @@ type Holiday struct {
 	// schema lists "fields" in its `required` array but never defines it
 	// under `properties` (a spec bug, not a gap — the update request body
 	// does reference CustomFieldsData for the same field, confirming its
-	// existence). It ships as raw JSON here rather than a typed
-	// CustomFieldsData value, since that discriminated-union type isn't
-	// otherwise needed by this pass; decode it once the Fields resource
-	// (and CustomFieldsData) lands.
-	//
-	// TODO(fields): replace with CustomFieldsData once implemented.
-	Fields json.RawMessage `json:"fields,omitempty"`
+	// existence).
+	Fields CustomFieldsData `json:"fields,omitempty"`
 
 	// Note: the Holiday schema's `required` list also includes "rank",
 	// which is defined nowhere in `properties` and doesn't correspond to
@@ -120,9 +114,8 @@ type UpdateHolidayParams struct {
 	Introduction *Nullable[string] `json:"introduction,omitempty"`
 	Description  *Nullable[string] `json:"description,omitempty"`
 
-	// Fields replaces this holiday's custom field data. See Holiday.Fields
-	// for why this is raw JSON rather than a typed value in this pass.
-	Fields json.RawMessage `json:"fields,omitempty"`
+	// Fields replaces this holiday's custom field data.
+	Fields CustomFieldsData `json:"fields,omitempty"`
 
 	Published *bool            `json:"published,omitempty"`
 	Ordering  *OrderingCommand `json:"ordering,omitempty"`

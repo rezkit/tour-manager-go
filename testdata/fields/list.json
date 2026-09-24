@@ -1,0 +1,66 @@
+[
+  {
+    "id": "01gpkgcy6t0m84czh8gy4kgr1",
+    "label": "Details",
+    "rank": 0,
+    "fields": [
+      {
+        "id": "01gpkgcy6t0m84czh8gy4kfd1",
+        "name": "trip_notes",
+        "group_id": "01gpkgcy6t0m84czh8gy4kgr1",
+        "rank": 0,
+        "label": "Trip Notes",
+        "required": false,
+        "type": "text",
+        "minLength": 5,
+        "maxLength": 200
+      },
+      {
+        "id": "01gpkgcy6t0m84czh8gy4kfd2",
+        "name": "travel_date",
+        "group_id": "01gpkgcy6t0m84czh8gy4kgr1",
+        "rank": 1,
+        "label": "Travel Date",
+        "required": true,
+        "type": "date"
+      },
+      {
+        "id": "01gpkgcy6t0m84czh8gy4kfd3",
+        "name": "party_size",
+        "group_id": "01gpkgcy6t0m84czh8gy4kgr1",
+        "rank": 2,
+        "label": "Party Size",
+        "required": true,
+        "type": "number",
+        "precision": 0,
+        "minimumValue": 1,
+        "maximumValue": 20
+      }
+    ]
+  },
+  {
+    "id": "01gpkgcy6t0m84czh8gy4kgr2",
+    "label": "Preferences",
+    "rank": 1,
+    "fields": [
+      {
+        "id": "01gpkgcy6t0m84czh8gy4kfd4",
+        "name": "wheelchair_access",
+        "group_id": "01gpkgcy6t0m84czh8gy4kgr2",
+        "rank": 0,
+        "label": "Wheelchair Access",
+        "type": "boolean"
+      },
+      {
+        "id": "01gpkgcy6t0m84czh8gy4kfd5",
+        "name": "room_pref",
+        "group": "01gpkgcy6t0m84czh8gy4kgr2",
+        "rank": 1,
+        "label": "Room Preference",
+        "required": false,
+        "type": "select_multi",
+        "values": ["twin", "double", "single"]
+      }
+    ]
+  }
+]

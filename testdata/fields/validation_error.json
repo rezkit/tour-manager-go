@@ -1,0 +1,7 @@
+{
+  "message": "name must be a string. (and 1 more error)",
+  "errors": {
+    "name": ["name must be a string."],
+    "group_id": ["group_id is required."]
+  }
+}
