@@ -10880,13 +10880,18 @@ paths:
               type: object
               properties:
                 value:
-                  type: number
-                  minimum: 0
-                  description: Set the price value
+                  type: string
+                  pattern: '^\d+(\.\d{1,2})?$'
+                  example: '1240.00'
+                  description: Set the price value, as a decimal string with up
+                    to 2 decimal places.
                 deposit:
-                  description: Set the deposit value. Remove the deposit and revert
-                    to default calculation by setting to null.
-                  type: number
+                  description: Set the deposit value, as a decimal string with up
+                    to 2 decimal places. Remove the deposit and revert to default
+                    calculation by setting to null.
+                  type: string
+                  pattern: '^\d+(\.\d{1,2})?$'
+                  example: '62.00'
                   nullable: true
                 on_sale:
                   type: boolean
@@ -14036,8 +14041,11 @@ components:
 
             '
         value:
-          type: number
-          example: 1240.0
+          type: string
+          pattern: '^\d+\.\d{2}$'
+          example: '1240.00'
+          description: Price value, rendered as a decimal string with 2 decimal
+            places.
         deposit:
           type: object
           properties:
@@ -14046,8 +14054,11 @@ components:
               description: Determines if the given deposit amount has been calculated
                 via a global rule
             value:
-              type: number
-              description: Deposit payment required to confirm a reservation.
+              type: string
+              pattern: '^\d+\.\d{2}$'
+              example: '62.00'
+              description: Deposit payment required to confirm a reservation, rendered
+                as a decimal string with 2 decimal places.
     Inventory:
       discriminator:
         propertyName: type
@@ -14322,19 +14333,29 @@ components:
         end:
           type: string
           format: date-time
+        published:
+          type: boolean
         range_type:
           $ref: '#/components/schemas/DepartureRangeType'
         inventory:
           $ref: '#/components/schemas/Inventory'
+        fields:
+          $ref: '#/components/schemas/CustomFieldsData'
     DepartureProperties:
       type: object
       required:
       - start
       - end
-      - inventory
+      - version_id
       additionalProperties: false
       allOf:
       - $ref: '#/components/schemas/DepartureParams'
+      - type: object
+        properties:
+          version_id:
+            description: ID of the Holiday Version this departure belongs to.
+            allOf:
+            - $ref: '#/components/schemas/ID'
     ItineraryEntryParams:
       type: object
       properties:
