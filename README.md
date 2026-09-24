@@ -113,16 +113,17 @@ per directory — e.g. `REZKIT_API_KEY=... go run ./examples/list-holidays`.
 
 ## Known gaps / out of scope
 
-This client currently implements seven fully-worked resources — **Holidays**,
+This client currently implements eight fully-worked resources — **Holidays**,
 **Categories**, **Departures**, **Elements**, **ElementOptions**,
-**Prices** and **Fields** — chosen to exercise every framework pattern
-(pagination, attachment, the create/update params convention, discriminated
-unions, and a bespoke CRUD sub-resource shaped like `HolidayRelations`).
+**Prices**, **Fields** and **HolidayVersions** — chosen to exercise every
+framework pattern (pagination, attachment, the create/update params
+convention, discriminated unions, and a bespoke CRUD sub-resource shaped
+like `HolidayRelations`, which `HolidayVersions` itself now also follows).
 `CustomFieldsData` (the recorded values for a `Fields`-defined field,
 distinct from the definitions themselves) is standalone, reusable infra —
 currently wired into `Holiday.Fields`, and ready for `Location`,
 `Accommodation` and `Extra` to pick up once those resources are built,
-since all three reference the same schema. The remaining ~21 resources in
+since all three reference the same schema. The remaining ~20 resources in
 `openapi.yml` are an explicit backlog: follow
 `.claude/skills/update-tour-manager-go-client/SKILL.md` to add them.
 
@@ -153,6 +154,15 @@ Separately, the following are excluded from every resource until
   types; Date, Boolean and Selection fields have no update body schema at
   all. No `Get`/`Delete`/`Restore` for fields or groups either — none of
   those operations exist in the spec.
+- **HolidayVersion**: no `deleted_at` field — openapi.yml's `HolidayVersion`
+  schema has no `deleted_at` property (and no `required` list at all),
+  despite `Delete`/`Restore` both existing. `UpdateHolidayVersionParams`
+  also excludes `fields`/`ordering`, even though `updateHolidayVersion`
+  reuses `UpdateHoliday`'s request body verbatim (which documents both) —
+  neither has any corresponding property on `HolidayVersion`'s own read
+  schema, so they're treated as artifacts of the reused body rather than
+  confirmed capabilities, the same reasoning as Holiday's excluded
+  `slug`/`seo`/`rank`.
 
 See the skill file for the full decision process behind these exclusions,
 and how to promote a resource out of this list once its spec gap is fixed.

@@ -218,6 +218,11 @@ func (r *HolidaysResource) Relations(id string) *HolidayRelations {
 	return &HolidayRelations{client: r.client, holidayID: id}
 }
 
+// Versions returns the Versions handle for the given Holiday.
+func (r *HolidaysResource) Versions(id string) *HolidayVersions {
+	return &HolidayVersions{client: r.client, holidayID: id}
+}
+
 // Copy (PUT /holidays/{id}/copy) is not implemented: openapi.yml documents
 // the response (a Holiday) but not the request body at all. Implement
 // once the spec documents what CopyHolidayParams should contain.

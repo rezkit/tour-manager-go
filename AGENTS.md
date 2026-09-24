@@ -65,9 +65,13 @@ since the spec has no list operation for it. `Fields` manages custom-field
 *definitions*, scoped by `EntityType` only (not a specific item — every
 entity of a type shares the same definitions); the recorded *values* for
 those fields live on the entity itself, typed as `CustomFieldsData` (see
-`Holiday.Fields` for the one entity that currently exposes it). **Only
-Holidays, Categories, Departures, Elements, ElementOptions, Prices and
-Fields are implemented as of this writing** — see "Known gaps" below before
+`Holiday.Fields` for the one entity that currently exposes it).
+`HolidayVersions` also has no top-level accessor — every operation on it
+requires a holiday ID, so it's only reached via
+`client.Holidays().Versions(holidayID)` (same shape as
+`client.Holidays().Relations(id)`). **Only Holidays, Categories,
+Departures, Elements, ElementOptions, Prices, Fields and HolidayVersions
+are implemented as of this writing** — see "Known gaps" below before
 assuming any other resource exists; check
 `go doc github.com/rezkit/tour-manager-go` for the current accessor list on
 `Client` if unsure.
@@ -154,8 +158,9 @@ isn't.
 ### Known gaps
 
 Only **Holidays**, **Categories**, **Departures**, **Elements**,
-**ElementOptions**, **Prices**, **Fields** are implemented. Beyond that,
-some operations are deliberately excluded even on implemented
+**ElementOptions**, **Prices**, **Fields**, **HolidayVersions** are
+implemented. Beyond that, some operations are deliberately excluded even on
+implemented
 resources because `openapi.yml` doesn't document them confidently enough
 to ship (e.g. Holiday has no `Copy`, Categories has no single-item `Get`).
 Full list and reasoning: see `README.md`'s "Known gaps / out of scope"

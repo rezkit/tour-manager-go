@@ -1,0 +1,31 @@
+{
+  "total": 2,
+  "current_page": 1,
+  "last_page": 1,
+  "from": 1,
+  "to": 2,
+  "data": [
+    {
+      "id": "01gpkgcy6t0m84czh8gy4kver1",
+      "holiday_id": "01gpkgcy6t0m84czh8gy4kjat1",
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-02T00:00:00Z",
+      "name": "2024 Season",
+      "code": "HV2024",
+      "introduction": "Summer 2024",
+      "description": "<p>2024 season details</p>",
+      "published": true
+    },
+    {
+      "id": "01gpkgcy6t0m84czh8gy4kver2",
+      "holiday_id": "01gpkgcy6t0m84czh8gy4kjat1",
+      "created_at": "2024-02-01T00:00:00Z",
+      "updated_at": "2024-02-02T00:00:00Z",
+      "name": "2025 Season",
+      "code": "HV2025",
+      "introduction": "Summer 2025",
+      "description": "<p>2025 season details</p>",
+      "published": false
+    }
+  ]
+}
