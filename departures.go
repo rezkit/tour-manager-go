@@ -212,10 +212,21 @@ func (r *DepartureElements) Update(ctx context.Context, departureElementID strin
 }
 
 // CreateDepartureParams are the properties for creating a new Departure.
-// Start, End and Inventory are required.
+// VersionID, Start, End and Inventory are required.
+//
+// VersionID is not documented anywhere in openapi.yml's DepartureProperties
+// schema — neither `properties` nor `required` mentions it — but without
+// it the API has no way to know which Holiday Version the new Departure
+// belongs to, and createDeparture cannot actually succeed without one
+// (confirmed against real API behavior, not inferred from the spec; see
+// README.md's "Known gaps"/the openapi.yml generation-gap note in
+// AGENTS.md). It's sent under the JSON key "version_id", matching
+// Departure's own field of the same name, since the request body
+// otherwise documents no field for it at all.
 //
 // spec: DepartureProperties (allOf DepartureParams + its own `required`)
 type CreateDepartureParams struct {
+	VersionID string             `json:"version_id"`
 	Start     time.Time          `json:"start"`
 	End       time.Time          `json:"end"`
 	Inventory Inventory          `json:"inventory"`

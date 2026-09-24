@@ -158,7 +158,14 @@ Separately, the following are excluded from every resource until
   the spec), and an `ordering`/reorder field on `UpdateCategoryParams` (the
   spec's inline update body doesn't include one, unlike Holiday's).
 - **Departures**: no `Restore` method — the spec defines no restore
-  operation for this resource.
+  operation for this resource. Conversely, `CreateDepartureParams.VersionID`
+  is included despite being completely undocumented in openapi.yml's
+  `DepartureProperties` schema (absent from both `properties` and
+  `required`) — without it, `createDeparture` cannot actually associate the
+  new Departure with a Holiday Version at all, confirmed against real API
+  behavior rather than inferred from the spec (see AGENTS.md's note on
+  `openapi.yml` being agent-generated from the implementation, not
+  hand-authored).
 - **Elements**: no `Restore` method, for the same reason.
 - **Fields**: `Update` only supports Text and Number fields
   (`UpdateTextFieldParams`/`UpdateNumberFieldParams`) — openapi.yml's

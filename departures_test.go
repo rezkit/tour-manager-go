@@ -144,6 +144,7 @@ func TestCreateDepartureParams_marshalsInventoryDiscriminator(t *testing.T) {
 	}))
 
 	_, err := client.Departures().Create(context.Background(), CreateDepartureParams{
+		VersionID: "01gpkgcy6t0m84czh8gy4kver1",
 		Inventory: AllocationInventory{Capacity: 5},
 	})
 	if err != nil {
@@ -160,6 +161,9 @@ func TestCreateDepartureParams_marshalsInventoryDiscriminator(t *testing.T) {
 	}
 	if inv["type"] != "allocation" || inv["capacity"] != float64(5) {
 		t.Fatalf("unexpected inventory payload: %v", inv)
+	}
+	if decoded["version_id"] != "01gpkgcy6t0m84czh8gy4kver1" {
+		t.Fatalf("expected version_id in request body: %v", decoded)
 	}
 }
 
