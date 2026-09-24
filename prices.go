@@ -51,8 +51,8 @@ type Price struct {
 // Price. All fields are optional; a nil field is left unchanged.
 //
 // Value and Deposit are [Decimal] rather than float64, matching the API's
-// actual (if undocumented) string encoding of monetary values — see
-// Decimal's doc comment. Deposit is `nullable: true` in openapi.yml: use
+// decimal-string encoding of monetary values — see Decimal's doc comment.
+// Deposit is `nullable: true` in openapi.yml: use
 // [NullValue] to set an explicit deposit, [Null] to clear it (reverting to
 // the operator's default calculation), or leave it nil to leave the
 // deposit unchanged.

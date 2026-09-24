@@ -109,13 +109,12 @@ err     = attachment.Detach(ctx, []string{categoryID})   // removes
 ### Monetary values
 
 `Price.Value`/`Price.Deposit.Value` (and `UpdatePriceParams`' equivalents)
-are `tourmanager.Decimal`, not `float64`. `openapi.yml` documents them as
-`type: number`, but the API actually encodes them as JSON strings (e.g.
-`"1240.00"`) to avoid floating-point rounding on currency values — a
-spec/wire mismatch confirmed against real API behavior, not a client guess.
-`Decimal` is a defined string type with no arithmetic of its own; convert
-with a decimal-math library of your choice, or `strconv.ParseFloat` if
-approximate float precision is acceptable for your use case.
+are `tourmanager.Decimal`, not `float64`. `openapi.yml` documents these as
+decimal strings (e.g. `"1240.00"`), specifically so the API can avoid
+floating-point rounding on currency values. `Decimal` is a defined string
+type with no arithmetic of its own; convert with a decimal-math library of
+your choice, or `strconv.ParseFloat` if approximate float precision is
+acceptable for your use case.
 
 ## Examples
 
@@ -158,14 +157,11 @@ Separately, the following are excluded from every resource until
   the spec), and an `ordering`/reorder field on `UpdateCategoryParams` (the
   spec's inline update body doesn't include one, unlike Holiday's).
 - **Departures**: no `Restore` method — the spec defines no restore
-  operation for this resource. Conversely, `CreateDepartureParams.VersionID`
-  is included despite being completely undocumented in openapi.yml's
-  `DepartureProperties` schema (absent from both `properties` and
-  `required`) — without it, `createDeparture` cannot actually associate the
-  new Departure with a Holiday Version at all, confirmed against real API
-  behavior rather than inferred from the spec (see AGENTS.md's note on
-  `openapi.yml` being agent-generated from the implementation, not
-  hand-authored).
+  operation for this resource. `CreateDepartureParams.Fields` has no
+  corresponding read field on `Departure` — `openapi.yml`'s `DepartureParams`
+  (the shared create/update body) documents a `fields` property, but
+  `Departure`'s own read schema doesn't, so it can be written but not read
+  back through this client.
 - **Elements**: no `Restore` method, for the same reason.
 - **Fields**: `Update` only supports Text and Number fields
   (`UpdateTextFieldParams`/`UpdateNumberFieldParams`) — openapi.yml's

@@ -10,14 +10,12 @@ import (
 // amounts (see [Price]) — as the exact decimal string the API sends,
 // rather than a float64.
 //
-// openapi.yml documents these fields as `type: number`, but the API
-// actually encodes them as JSON strings (e.g. "1240.00"), specifically to
-// avoid floating-point rounding on currency values — a spec/wire mismatch,
-// not a client guess (confirmed against real API behavior, not inferred
-// from the spec). [Decimal.UnmarshalJSON] also accepts a bare JSON number
-// defensively, preserving its literal token instead of round-tripping it
-// through float64, in case a future spec fix (or an inconsistency between
-// endpoints) sends one — either way, no precision is lost.
+// openapi.yml documents these fields as `type: string` with a decimal
+// pattern (e.g. "1240.00"), specifically so the API can avoid
+// floating-point rounding on currency values. [Decimal.UnmarshalJSON] also
+// accepts a bare JSON number defensively, preserving its literal token
+// instead of round-tripping it through float64, in case any endpoint ever
+// sends one unquoted — either way, no precision is lost.
 //
 // Decimal is a defined string type with no arithmetic of its own: convert
 // with a decimal-math library of your choice (this client has no runtime

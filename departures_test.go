@@ -167,6 +167,67 @@ func TestCreateDepartureParams_marshalsInventoryDiscriminator(t *testing.T) {
 	}
 }
 
+func TestCreateDepartureParams_publishedAndFields(t *testing.T) {
+	var gotBody []byte
+	client := newTestClient(t, handlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		var err error
+		gotBody, err = io.ReadAll(r.Body)
+		if err != nil {
+			t.Fatalf("read request body: %v", err)
+		}
+		serveFile(t, w, http.StatusCreated, "testdata/departures/get.json")
+	}))
+
+	published := true
+	_, err := client.Departures().Create(context.Background(), CreateDepartureParams{
+		VersionID: "01gpkgcy6t0m84czh8gy4kver1",
+		Inventory: AllocationInventory{Capacity: 5},
+		Published: &published,
+		Fields: CustomFieldsData{
+			"notes": TextFieldValue{Type: TextFieldTypePlain, Value: "Group booking"},
+		},
+	})
+	if err != nil {
+		t.Fatalf("Create: %v", err)
+	}
+
+	body := string(gotBody)
+	if !strings.Contains(body, `"published":true`) {
+		t.Errorf("expected published in request body: %s", body)
+	}
+	if !strings.Contains(body, `"notes":{"type":"text","value":"Group booking"}`) {
+		t.Errorf("expected fields in request body: %s", body)
+	}
+}
+
+func TestUpdateDepartureParams_publishedAndFields(t *testing.T) {
+	var gotBody []byte
+	client := newTestClient(t, handlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		var err error
+		gotBody, err = io.ReadAll(r.Body)
+		if err != nil {
+			t.Fatalf("read request body: %v", err)
+		}
+		serveFile(t, w, http.StatusOK, "testdata/departures/get.json")
+	}))
+
+	published := false
+	_, err := client.Departures().Update(context.Background(), "dep1", UpdateDepartureParams{
+		Published: &published,
+	})
+	if err != nil {
+		t.Fatalf("Update: %v", err)
+	}
+
+	body := string(gotBody)
+	if !strings.Contains(body, `"published":false`) {
+		t.Errorf("expected published in request body: %s", body)
+	}
+	if strings.Contains(body, `"fields"`) || strings.Contains(body, `"inventory"`) {
+		t.Errorf("expected fields/inventory to be omitted (unset): %s", body)
+	}
+}
+
 func TestDepartureElements_Update_setsInventory(t *testing.T) {
 	var gotBody []byte
 	client := newTestClient(t, handlerFunc(func(w http.ResponseWriter, r *http.Request) {

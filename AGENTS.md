@@ -133,11 +133,12 @@ params.Introduction = tourmanager.Null[string]()          // explicitly clear it
 `Price.Value`/`Price.Deposit.Value` and `UpdatePriceParams`' equivalents
 are `tourmanager.Decimal` (a defined string type), not `float64` — the API
 encodes monetary amounts as JSON strings (e.g. `"1240.00"`) to avoid
-floating-point rounding, despite `openapi.yml` documenting them as
-`type: number`. `Decimal` has no arithmetic of its own; convert with a
-decimal-math library or `strconv.ParseFloat` as your use case requires.
-Don't assume every `type: number` field in the spec is actually a
-`float64` in this client — check `go doc` for the field, not the spec.
+floating-point rounding, and `openapi.yml` documents this. `Decimal` has no
+arithmetic of its own; convert with a decimal-math library or
+`strconv.ParseFloat` as your use case requires. Don't assume every
+`type: number` field in the spec is a `float64` in this client without
+checking — some other numeric-looking field could turn out to be the same
+kind of decimal string; check `go doc` for the field, not just the spec.
 
 ### Attachment sub-resources (many-to-many, e.g. Categories on a Holiday)
 
@@ -236,8 +237,10 @@ The essentials, if you read nothing else:
    field missing from a schema entirely, and so on). The repo owner's own
    direct confirmation of real API behavior *is* sufficient evidence to
    diverge from the spec's literal shape, unlike "the JS/PHP client has
-   it" (point 5) — e.g. `tourmanager.Decimal` (monetary values sent as
+   it" (point 5) — `tourmanager.Decimal` (monetary values sent as decimal
    strings) and `CreateDepartureParams.VersionID` (required to create a
-   working Departure, undocumented in `DepartureProperties`) both exist
-   because of this. Still document the divergence and why, same as any
+   working Departure) both originally shipped this way *before* the spec
+   was corrected to match; the spec has since caught up on both, but treat
+   it as a standing risk for anything not yet confirmed working, not a
+   closed issue. Still document any such divergence and why, same as any
    other spec gap.

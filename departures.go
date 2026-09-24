@@ -214,16 +214,6 @@ func (r *DepartureElements) Update(ctx context.Context, departureElementID strin
 // CreateDepartureParams are the properties for creating a new Departure.
 // VersionID, Start, End and Inventory are required.
 //
-// VersionID is not documented anywhere in openapi.yml's DepartureProperties
-// schema — neither `properties` nor `required` mentions it — but without
-// it the API has no way to know which Holiday Version the new Departure
-// belongs to, and createDeparture cannot actually succeed without one
-// (confirmed against real API behavior, not inferred from the spec; see
-// README.md's "Known gaps"/the openapi.yml generation-gap note in
-// AGENTS.md). It's sent under the JSON key "version_id", matching
-// Departure's own field of the same name, since the request body
-// otherwise documents no field for it at all.
-//
 // spec: DepartureProperties (allOf DepartureParams + its own `required`)
 type CreateDepartureParams struct {
 	VersionID string             `json:"version_id"`
@@ -231,6 +221,13 @@ type CreateDepartureParams struct {
 	End       time.Time          `json:"end"`
 	Inventory Inventory          `json:"inventory"`
 	RangeType DepartureRangeType `json:"range_type,omitempty"`
+	Published *bool              `json:"published,omitempty"`
+
+	// Fields sets this Departure's custom field data. openapi.yml documents
+	// this on DepartureParams (the shared create/update request schema),
+	// but Departure's own read schema has no corresponding property, so
+	// there is currently no way to read it back via this client.
+	Fields CustomFieldsData `json:"fields,omitempty"`
 }
 
 // UpdateDepartureParams are the properties that may change on an existing
@@ -242,6 +239,12 @@ type UpdateDepartureParams struct {
 	End       *time.Time         `json:"end,omitempty"`
 	Inventory Inventory          `json:"inventory,omitempty"`
 	RangeType DepartureRangeType `json:"range_type,omitempty"`
+	Published *bool              `json:"published,omitempty"`
+
+	// Fields replaces this Departure's custom field data. See
+	// [CreateDepartureParams.Fields] for why there's no corresponding read
+	// field on [Departure].
+	Fields CustomFieldsData `json:"fields,omitempty"`
 }
 
 // DeparturesResource provides access to the Departures API.
