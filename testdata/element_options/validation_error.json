@@ -1,0 +1,7 @@
+{
+  "message": "occupancy.from must be an integer. (and 1 more error)",
+  "errors": {
+    "occupancy.from": ["occupancy.from must be an integer."],
+    "price_unit": ["price_unit must be one of unit, person, unit_day, person_day."]
+  }
+}

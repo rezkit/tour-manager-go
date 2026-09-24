@@ -75,6 +75,13 @@ type Departure struct {
 	// SourceID is the ID of the departure this one was copied from, if
 	// any.
 	SourceID *string `json:"source_id,omitempty"`
+
+	// Elements holds this Departure's configured Elements (each with its
+	// own inventory, Options and generated Price IDs) as returned inline
+	// by the API. This is the only way to discover the IDs Tour Manager
+	// generates for a DepartureElement, its Options and their Prices —
+	// there is no separate endpoint to list them.
+	Elements []DepartureElement `json:"elements,omitempty"`
 }
 
 // UnmarshalJSON decodes a Departure, dispatching its Inventory field to
@@ -95,6 +102,76 @@ func (d *Departure) UnmarshalJSON(data []byte) error {
 	}
 	d.Inventory = inv
 	return nil
+}
+
+// DepartureElement is one [Element] as configured on a specific Departure:
+// its own Inventory (independent of the Element's DefaultInventory), a
+// balance-due date, and the [DepartureElementOption]s (with their generated
+// [Price] IDs) bookable against it.
+//
+// Note: openapi.yml documents no way to write a DepartureElement's
+// Inventory — there is no path anywhere in the spec shaped like
+// /holidays/departures/{departure}/elements/{element}. The JS sibling
+// client having such a call is not, on its own, sufficient evidence to
+// guess and ship a request shape here (see AGENTS.md and the
+// update-tour-manager-go-client skill, section 4); this is tracked as a
+// backlog item in README.md until openapi.yml documents the operation.
+type DepartureElement struct {
+	ID        string     `json:"id"`
+	CreatedAt time.Time  `json:"created_at"`
+	UpdatedAt time.Time  `json:"updated_at"`
+	DeletedAt *time.Time `json:"deleted_at,omitempty"`
+
+	Inventory  Inventory                   `json:"inventory"`
+	Element    DepartureElementSummary     `json:"element"`
+	BalanceDue *DepartureElementBalanceDue `json:"balance_due,omitempty"`
+	Options    []DepartureElementOption    `json:"options,omitempty"`
+}
+
+// UnmarshalJSON decodes a DepartureElement, dispatching its Inventory field
+// to the concrete type identified by that field's own "type" discriminator.
+func (e *DepartureElement) UnmarshalJSON(data []byte) error {
+	type alias DepartureElement
+	aux := struct {
+		Inventory json.RawMessage `json:"inventory"`
+		*alias
+	}{alias: (*alias)(e)}
+
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+	inv, err := unmarshalInventory(aux.Inventory)
+	if err != nil {
+		return err
+	}
+	e.Inventory = inv
+	return nil
+}
+
+// DepartureElementSummary is the trimmed [Element] reference nested inside
+// a [DepartureElement].
+type DepartureElementSummary struct {
+	ID        string `json:"id"`
+	Name      string `json:"name"`
+	IsPackage bool   `json:"is_package"`
+	Published bool   `json:"published"`
+}
+
+// DepartureElementBalanceDue is the balance payment due date for a
+// DepartureElement.
+type DepartureElementBalanceDue struct {
+	// Calculated reports whether Date was derived from a global rule, as
+	// opposed to being set explicitly.
+	Calculated bool      `json:"calculated"`
+	Date       time.Time `json:"date"`
+}
+
+// DepartureElementOption is an [ElementOption] as offered on a specific
+// Departure, together with its generated [Price]s — exactly one per
+// operator currency.
+type DepartureElementOption struct {
+	ElementOption
+	Prices []Price `json:"prices"`
 }
 
 // CreateDepartureParams are the properties for creating a new Departure.

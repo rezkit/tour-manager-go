@@ -81,6 +81,55 @@ func TestDeparturesResource_Get(t *testing.T) {
 	}
 }
 
+func TestDeparturesResource_Get_elementsTree(t *testing.T) {
+	client := newTestClient(t, handlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		serveFile(t, w, http.StatusOK, "testdata/departures/get_with_elements.json")
+	}))
+
+	d, err := client.Departures().Get(context.Background(), "01gpkgcy6t0m84czh8gy4kdep1")
+	if err != nil {
+		t.Fatalf("Get: %v", err)
+	}
+	if len(d.Elements) != 1 {
+		t.Fatalf("expected 1 departure element, got %d", len(d.Elements))
+	}
+
+	de := d.Elements[0]
+	if de.ID != "01gpkgcy6t0m84czh8gy4kdel1" {
+		t.Errorf("DepartureElement.ID = %q", de.ID)
+	}
+	onReq, ok := de.Inventory.(OnRequestInventory)
+	if !ok {
+		t.Fatalf("DepartureElement.Inventory type = %T, want OnRequestInventory", de.Inventory)
+	}
+	if onReq.Errata != "Confirm with supplier" {
+		t.Errorf("OnRequestInventory.Errata = %q", onReq.Errata)
+	}
+	if de.Element.ID != "01gpkgcy6t0m84czh8gy4kel1" || de.Element.Name != "Hotel Room" {
+		t.Errorf("unexpected element summary: %+v", de.Element)
+	}
+	if de.BalanceDue == nil || !de.BalanceDue.Calculated {
+		t.Fatalf("unexpected balance due: %+v", de.BalanceDue)
+	}
+
+	if len(de.Options) != 1 {
+		t.Fatalf("expected 1 departure element option, got %d", len(de.Options))
+	}
+	opt := de.Options[0]
+	if opt.ID != "01gpkgcy6t0m84czh8gy4kopt1" || opt.Name != "Double Room" {
+		t.Fatalf("unexpected departure element option: %+v", opt)
+	}
+	if len(opt.Prices) != 2 {
+		t.Fatalf("expected 2 prices, got %d", len(opt.Prices))
+	}
+	if opt.Prices[0].ID != "01gpkgcy6t0m84czh8gy4kprc1" || opt.Prices[0].Currency != "USD" {
+		t.Errorf("unexpected price 0: %+v", opt.Prices[0])
+	}
+	if opt.Prices[1].Currency != "GBP" || opt.Prices[1].Deposit != nil {
+		t.Errorf("unexpected price 1: %+v", opt.Prices[1])
+	}
+}
+
 func TestCreateDepartureParams_marshalsInventoryDiscriminator(t *testing.T) {
 	var gotBody []byte
 	client := newTestClient(t, handlerFunc(func(w http.ResponseWriter, r *http.Request) {

@@ -54,13 +54,17 @@ normal `error` on the first call that needs it, not at construction time.
 client.Holidays()
 client.Categories()
 client.Departures()
+client.Elements()
+client.Prices()
 ```
 
-Each returns a small resource-scoped handle. **Only Holidays, Categories
-and Departures are implemented as of this writing** — see "Known gaps"
-below before assuming any other resource exists; check
-`go doc github.com/rezkit/tour-manager-go` for the current accessor list on
-`Client` if unsure.
+Each returns a small resource-scoped handle. ElementOptions has no
+top-level accessor — it's reached via `client.Elements().Options(elementID)`
+since the spec has no list operation for it. **Only Holidays, Categories,
+Departures, Elements, ElementOptions and Prices are implemented as of this
+writing** — see "Known gaps" below before assuming any other resource
+exists; check `go doc github.com/rezkit/tour-manager-go` for the current
+accessor list on `Client` if unsure.
 
 ### Pagination: `List` (one page) vs `All` (every page)
 
@@ -121,6 +125,14 @@ attachment.Detach(ctx, ids)   // remove
 attachment.List(ctx, opts)    // as above
 ```
 
+### Runnable reference code
+
+[`examples/`](examples/README.md) has small, complete `package main`
+programs demonstrating these patterns end to end (e.g. `list-holidays` for
+`All` + `text/tabwriter`). Prefer copying from there over inferring usage
+from this file alone — the examples are compiled and tested, this file
+isn't.
+
 ### Don't
 
 - Don't assume every field is a pointer — this isn't the old
@@ -135,8 +147,9 @@ attachment.List(ctx, opts)    // as above
 
 ### Known gaps
 
-Only **Holidays**, **Categories**, **Departures** are implemented. Beyond
-that, some operations are deliberately excluded even on implemented
+Only **Holidays**, **Categories**, **Departures**, **Elements**,
+**ElementOptions**, **Prices** are implemented. Beyond that, some operations
+are deliberately excluded even on implemented
 resources because `openapi.yml` doesn't document them confidently enough
 to ship (e.g. Holiday has no `Copy`, Categories has no single-item `Get`).
 Full list and reasoning: see `README.md`'s "Known gaps / out of scope"

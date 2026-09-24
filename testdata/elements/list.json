@@ -1,0 +1,56 @@
+{
+  "total": 2,
+  "current_page": 1,
+  "last_page": 1,
+  "from": 1,
+  "to": 2,
+  "data": [
+    {
+      "id": "01gpkgcy6t0m84czh8gy4kel1",
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-02T00:00:00Z",
+      "deleted_at": null,
+      "version_id": "01gpkgcy6t0m84czh8gy4kver1",
+      "name": "Hotel Room",
+      "category": {
+        "id": "01gpkgcy6t0m84czh8gy4kcat1",
+        "name": "Accommodation",
+        "description": "Accommodation elements",
+        "published": true,
+        "searchable": true,
+        "created_at": "2024-01-01T00:00:00Z",
+        "updated_at": "2024-01-02T00:00:00Z"
+      },
+      "is_package": true,
+      "published": true,
+      "default_inventory": {
+        "type": "allocation",
+        "capacity": 40
+      },
+      "balance_due": 56
+    },
+    {
+      "id": "01gpkgcy6t0m84czh8gy4kel2",
+      "created_at": "2024-01-01T00:00:00Z",
+      "updated_at": "2024-01-02T00:00:00Z",
+      "deleted_at": null,
+      "version_id": "01gpkgcy6t0m84czh8gy4kver1",
+      "name": "Airport Transfer",
+      "category": {
+        "id": "01gpkgcy6t0m84czh8gy4kcat2",
+        "name": "Transport",
+        "description": "Transport elements",
+        "published": true,
+        "searchable": true,
+        "created_at": "2024-01-01T00:00:00Z",
+        "updated_at": "2024-01-02T00:00:00Z"
+      },
+      "is_package": false,
+      "published": true,
+      "default_inventory": {
+        "type": "free_sell"
+      },
+      "balance_due": null
+    }
+  ]
+}

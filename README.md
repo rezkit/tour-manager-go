@@ -106,13 +106,19 @@ _, err  = attachment.Replace(ctx, []string{categoryID})  // overwrites
 err     = attachment.Detach(ctx, []string{categoryID})   // removes
 ```
 
+## Examples
+
+Runnable sample programs live under [`examples/`](examples/README.md), one
+per directory — e.g. `REZKIT_API_KEY=... go run ./examples/list-holidays`.
+
 ## Known gaps / out of scope
 
-This client currently implements three fully-worked resources — **Holidays**,
-**Categories** and **Departures** — chosen to exercise every framework
-pattern (pagination, attachment, the create/update params convention,
-discriminated unions). The remaining ~25 resources in `openapi.yml` are an
-explicit backlog: follow
+This client currently implements six fully-worked resources — **Holidays**,
+**Categories**, **Departures**, **Elements**, **ElementOptions** and
+**Prices** — chosen to exercise every framework pattern (pagination,
+attachment, the create/update params convention, discriminated unions, and
+a bespoke CRUD sub-resource shaped like `HolidayRelations`). The remaining
+~22 resources in `openapi.yml` are an explicit backlog: follow
 `.claude/skills/update-tour-manager-go-client/SKILL.md` to add them.
 
 Separately, the following are excluded from every resource until
@@ -131,6 +137,11 @@ Separately, the following are excluded from every resource until
   spec's inline update body doesn't include one, unlike Holiday's).
 - **Departures**: no `Restore` method — the spec defines no restore
   operation for this resource.
+- **Elements**: no `Restore` method, for the same reason.
+- **DepartureElement inventory**: no way to write a `DepartureElement`'s
+  inventory (as opposed to reading it via `Departure.Elements`) — no path
+  exists in `openapi.yml` for this at all (only the JS sibling client
+  suggests it exists, which isn't sufficient corroboration on its own).
 
 See the skill file for the full decision process behind these exclusions,
 and how to promote a resource out of this list once its spec gap is fixed.
